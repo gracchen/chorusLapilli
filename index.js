@@ -32,6 +32,7 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      numSteps: 0,
       squares: Array(9).fill(null),
       xIsNext: true, //default start as X
     };
@@ -45,12 +46,19 @@ class Board extends React.Component {
       return;
     }
 
-    if (this.state.xIsNext)
+    if (this.state.numSteps < 6)  //regular tic tac toe behavior until >6 steps
     {
-      squares[i] = 'X';
-    } else
-    {
-      squares[i] = 'O';
+      this.state.numSteps++;
+
+      if (this.state.xIsNext)
+      {
+        squares[i] = 'X';
+      } else
+      {
+        squares[i] = 'O';
+      }
+    } else {  //now define chorus lapilli behavior
+
     }
     
     this.setState({
@@ -75,7 +83,7 @@ class Board extends React.Component {
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O') + this.state.numSteps;
     }
     //const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
