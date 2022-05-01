@@ -2,6 +2,7 @@ CS 35L Eggert due May 1, 2022
 
 Assignment 3 - Chorus-Lapilli
 codepen.io demo: https://codepen.io/graychen03/pen/rNJNrry
+
 ![image](https://user-images.githubusercontent.com/103862883/166164107-829a1041-0607-431f-b253-9b832b3dcc65.png)
 
 Rules:
