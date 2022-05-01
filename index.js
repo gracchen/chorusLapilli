@@ -89,23 +89,41 @@ class Board extends React.Component {
          squares[i] = null;
         } 
     }
-    else  //if already selected
+    else  //if already selected, try to place it
     {
-      if (i == this.state.selectedPos)
+      if (i == this.state.selectedPos)  //if same place, place back down (always allowed)
       {
-        squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+        squares[i] = this.state.xIsNext ? 'X' : 'O'; 
         this.setState({ squares: squares, });
         this.state.XisSelected = false;
         this.state.OisSelected = false;
+        return;
       }
-      else if (isAdjacent(i, this.state.selectedPos))
+      else if (isAdjacent(i, this.state.selectedPos) && squares[i] == null)
       {
-        this.setState({ squares: squares, });
-        squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
-        this.state.XisSelected = false;
-        this.state.OisSelected = false;
-        this.setState({ squares: squares, xIsNext: !this.state.xIsNext,});
+        if (squares[4] == 'X' && this.state.xIsNext)  //if X stepped in center in previous step, must move it out now
+        {
+          const whatif = this.state.squares.slice();
+          whatif[i] = 'X'
+  
+          if (calculateWinner(whatif))  //if player wins immediately with this move, allow it
+          {
+            this.setState({ squares: squares, });
+            squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+            this.state.XisSelected = false;
+            this.setState({ squares: squares,});
+            return;
+          }
+          else if (i != 4){  //only allow 4 
+            return;
+          }
+        }
       }
+      this.setState({ squares: squares, });
+      squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+      this.state.XisSelected = false;
+      this.state.OisSelected = false;
+      this.setState({ squares: squares, xIsNext: !this.state.xIsNext,});
     }
   }
   
