@@ -42,12 +42,15 @@ class Board extends React.Component {
     const squares = this.state.squares.slice();
     //squares[i] = this.state.xIsNext ? 'X' : 'O';
 
-    if (calculateWinner(squares) || squares[i]) { //do nothing if someone won
-      return;
+    if (calculateWinner(squares)) { //do nothing if someone won
+     return;
     }
 
     if (this.state.numSteps < 6)  //regular tic tac toe behavior until >6 steps
     {
+      if (squares[i]) //do nothing if square already filled
+        return;
+
       this.state.numSteps++;
 
       if (this.state.xIsNext)
@@ -57,14 +60,29 @@ class Board extends React.Component {
       {
         squares[i] = 'O';
       }
-    } else {  //now define chorus lapilli behavior
 
+      this.setState({
+        squares: squares, 
+        xIsNext: !this.state.xIsNext, //flips xIsNext
+      });
+    } 
+    
+    
+    else {  //now define chorus lapilli behavior
+      if ((this.state.xIsNext && squares[i] == 'X') || (!this.state.xIsNext && squares[i] == 'O'))
+      {
+        squares[i] = null;
+        this.setState({
+          squares: squares, 
+          xIsNext: !this.state.xIsNext, //flips xIsNext
+        });
+      } 
+      else {  //if failed to select then no
+        return;
+      }
     }
     
-    this.setState({
-      squares: squares, 
-      xIsNext: !this.state.xIsNext, //flips xIsNext
-    });
+
   }
   
   renderSquare(i) {
