@@ -33,8 +33,11 @@ class Board extends React.Component {
     super(props);
     this.state = {
       numSteps: 0,
+      XisSelected: false,
+      OisSelected: false,
       squares: Array(9).fill(null),
       xIsNext: true, //default start as X
+      selectedPos: null,
     };
   }
   
@@ -68,21 +71,32 @@ class Board extends React.Component {
     } 
     
     
-    else {  //now define chorus lapilli behavior
-      if ((this.state.xIsNext && squares[i] == 'X') || (!this.state.xIsNext && squares[i] == 'O'))
+    else if (!(this.state.XisSelected || this.state.OisSelected)){  //now define chorus lapilli behavior if NOT YET selected item
+      if ((this.state.xIsNext && squares[i] == 'X'))
       {
-        squares[i] = null;
+         this.state.XisSelected = true;
+      } 
+      else if (!this.state.xIsNext && squares[i] == 'O')
+      {    
+        this.state.OisSelected = true;
+      }
+      this.state.selectedPos = i;  //store selected's position to check for adjacent-ness later
+      squares[i] = null;
+    }
+    else  //if already selected
+    {
+       if (isAdjacent(i, this.state.selectedPos))
+       {
+        squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+        this.state.XisSelected = false;
+        this.state.OisSelected = false;
+
         this.setState({
           squares: squares, 
           xIsNext: !this.state.xIsNext, //flips xIsNext
         });
-      } 
-      else {  //if failed to select then no
-        return;
-      }
+       }
     }
-    
-
   }
   
   renderSquare(i) {
@@ -167,4 +181,26 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function isAdjacent(i, j)
+{
+  if (i === 0)
+    return j === 1 || j === 3 || j === 4;
+  else if (i === 1)
+    return j === 0 || j === 2 || j === 4 || j === 3 || j === 5;
+  else if (i === 2)
+    return j === 1 || j === 4 || j === 5;
+  else if (i === 3)
+    return j === 0 || j === 1 || j === 4 || j === 6 || j === 7;
+  else if (i === 4) 
+    return true;
+  else if (i === 5)
+    return j === 1 || j === 2 || j === 4 || j === 7 || j === 8;
+  else if (i === 6)
+    return j === 3 || j === 4 || j === 7;
+  else if (i === 7)
+    return j === 3 || j === 4 || j === 5 || j === 6 || j === 8;
+  else if (i === 8)
+    return j === 4 || j === 5 || j === 7;
 }
