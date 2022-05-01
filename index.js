@@ -94,9 +94,9 @@ class Board extends React.Component {
       if (i == this.state.selectedPos)  //if same place, place back down (always allowed)
       {
         squares[i] = this.state.xIsNext ? 'X' : 'O'; 
-        this.setState({ squares: squares, });
         this.state.XisSelected = false;
-        this.state.OisSelected = false;
+        this.state.OisSelected = false; 
+        this.setState({ squares: squares, }); //does NOT switch player's turn (compared to line 125)
         return;
       }
       else if (isAdjacent(i, this.state.selectedPos) && squares[i] == null)
@@ -109,7 +109,7 @@ class Board extends React.Component {
           if (calculateWinner(whatif))  //if player wins immediately with this move, allow it
           {
             this.setState({ squares: squares, });
-            squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+            squares[i] = 'X';  //place it down
             this.state.XisSelected = false;
             this.setState({ squares: squares,});
             return;
@@ -118,12 +118,28 @@ class Board extends React.Component {
             return;
           }
         }
+        else if (squares[4] == 'O' && !this.state.xIsNext)  //if O stepped in center in previous step, must move it out now
+        {
+          const whatif = this.state.squares.slice();
+          whatif[i] = 'O'
+  
+          if (calculateWinner(whatif))  //if player wins immediately with this move, allow it
+          {
+            this.setState({ squares: squares, });
+            squares[i] = 'O';  //place it down
+            this.state.OisSelected = false;
+            this.setState({ squares: squares,});
+            return;
+          }
+          else if (i != 4){  //only allow 4 
+            return;
+          }
+        }
+        squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
+        this.state.XisSelected = false;
+        this.state.OisSelected = false;
+        this.setState({ squares: squares, xIsNext: !this.state.xIsNext,});
       }
-      this.setState({ squares: squares, });
-      squares[i] = this.state.xIsNext ? 'X' : 'O';  //place it down
-      this.state.XisSelected = false;
-      this.state.OisSelected = false;
-      this.setState({ squares: squares, xIsNext: !this.state.xIsNext,});
     }
   }
   
@@ -143,7 +159,7 @@ class Board extends React.Component {
     if (winner) {
       status = 'Winner: ' + winner;
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O') + " " +this.state.numSteps;
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
     //const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
